@@ -1,9 +1,11 @@
 #REQ 1
 # faça os imports que julgar necessários
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, MinMaxScaler 
 import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
+from sklearn.impute import SimpleImputer
+from sklearn.compose import ColumnTransformer
 #REQ 2
 #essa função deve devolver a base de dados
 def ler_base():
@@ -26,22 +28,36 @@ def dividir_em_features_e_classe(base):
 #Valores faltantes da coluna "Gastos com marketing": Substituir por zero
 #Valores faltantes da coluna "Estado": Substituir pela moda
 def lidar_com_valores_faltantes(features):
-    features_tratadas = features.copy()
-    media_pesquisa = features_tratadas['Gastos com pesquisa e desenvolvimento'].mean()
-    features_tratadas['Gastos com pesquisa e desenvolvimento'].fillna(media_pesquisa, inplace=True)
-    mediana_admin = features_tratadas['Gastos com administracao'].median()
-    features_tratadas['Gastos com administracao'].fillna(mediana_admin, inplace=True)
-    features_tratadas['Gastos com marketing'].fillna(0, inplace=True)
-    moda_estado = features_tratadas['Estado'].mode()[0]
-    features_tratadas['Estado'].fillna(moda_estado, inplace=True)
-    return features_tratadas
+    transformer = ColumnTransformer([
+        ('pesquisa_media', SimpleImputer(strategy='mean'), ['Gastos com pesquisa e desenvolvimento']),
+        ('admin_mediana', SimpleImputer(strategy='median'), ['Gastos com administracao']),
+        ('marketing_zero', SimpleImputer(strategy='constant', fill_value=0), ['Gastos com marketing']),
+        ('estado_moda', SimpleImputer(strategy='most_frequent'), ['Estado'])
+    ], remainder='passthrough')
+    features_tratadas = transformer.fit_transform(features)
+    df_features_tratadas = pd.DataFrame(features_tratadas, columns=features.columns)
+    return df_features_tratadas
 
 #REQ 5
 #essa função recebe as features
 #ela deve devolver as features da seguinte forma
 #Variável "Estado": Codificar com OneHotEncoding
 def codificar_categoricas(features):
-  pass
+    coluna_estado = features[['Estado']]
+    encoder = OneHotEncoder(drop='first', sparse_output=False)
+    estado_codificado = encoder.fit_transform(coluna_estado)
+    
+    df_estado_codificado = pd.DataFrame(
+        estado_codificado,
+        columns=encoder.get_feature_names_out(['Estado']),
+        index=features.index
+    )
+    
+    features_sem_estado = features.drop('Estado', axis=1)
+    features_finais = pd.concat([features_sem_estado, df_estado_codificado], axis=1)
+    
+    return features_finais
+
 
 #REQ 6
 #essa função recebe as features e a classe

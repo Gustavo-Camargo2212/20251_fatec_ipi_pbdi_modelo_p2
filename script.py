@@ -89,9 +89,34 @@ def normalizar(features_treinamento, features_teste):
   return df_treinamento_norm, df_teste_norm
 
 #REQ 8
-def vai():
   #chame as suas funções aqui
   #exiba as quatro bases aqui
-     pass
+
+def vai():
+    base = ler_base()
+    features, classe = dividir_em_features_e_classe(base)
+    features_sem_na = lidar_com_valores_faltantes(features)
+    print("--- Features após tratar valores faltantes  ---")
+    print(features_sem_na.head())
+
+    features_codificadas = codificar_categoricas(features_sem_na)
+    print("\n--- Features após codificar 'Estado'  ---")
+    print(features_codificadas.head())
+    
+    features_treinamento, features_teste, classe_treinamento, classe_teste = \
+        obter_bases_de_treinamento_e_teste(features_codificadas, classe)
+        
+    features_treinamento_final, features_teste_final = \
+        normalizar(features_treinamento, features_teste)
+    
+    print("\n\n --- BASES DE DADOS FINAIS PRONTAS --- ")
+    print("\n1. Features de Treinamento (Normalizadas):")
+    print(features_treinamento_final.head())
+    print("\n2. Features de Teste (Normalizadas):")
+    print(features_teste_final.head())
+    print("\n3. Classe de Treinamento:")
+    print(classe_treinamento.head())
+    print("\n4. Classe de Teste:")
+    print(classe_teste.head())
 
 vai()

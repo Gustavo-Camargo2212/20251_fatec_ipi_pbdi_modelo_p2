@@ -2,18 +2,21 @@
 # faça os imports que julgar necessários
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler 
 import numpy as np
 #REQ 2
 #essa função deve devolver a base de dados
 def ler_base():
-  return pd.read_csv('dados.csv')
+  return pd.read_csv('C:/Users/gu-gu/OneDrive/Desktop/Programação Banco de Dados/P1/20251_fatec_ipi_pbdi_p2_modelo/dados.csv')
 
 #REQ 3
 #essa função recebe a base lida anteriormente
 #ela deve devolver uma tupla contendo as features e a classe
 def dividir_em_features_e_classe(base):
-  pass
+    features = base.iloc[:, :-1]
+    classe = base.iloc[:, -1]
+    return features, classe 
+
 
 #REQ 4
 #essa função recebe as features

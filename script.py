@@ -72,7 +72,21 @@ def obter_bases_de_treinamento_e_teste(features, classe):
 #ela deve devolver uma tupla com 2 itens, da seguinte forma
 #todas as variáveis normalizadas com o método MinMax
 def normalizar(features_treinamento, features_teste):
-  pass
+  scaler = MinMaxScaler()
+    
+  colunas = features_treinamento.columns
+  indice_treinamento = features_treinamento.index
+  indice_teste = features_teste.index
+    
+  scaler.fit(features_treinamento)
+    
+  features_treinamento_norm = scaler.transform(features_treinamento)
+  features_teste_norm = scaler.transform(features_teste)
+    
+  df_treinamento_norm = pd.DataFrame(features_treinamento_norm, index=indice_treinamento, columns=colunas)
+  df_teste_norm = pd.DataFrame(features_teste_norm, index=indice_teste, columns=colunas)
+    
+  return df_treinamento_norm, df_teste_norm
 
 #REQ 8
 def vai():

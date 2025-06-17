@@ -7,7 +7,7 @@ import numpy as np
 #REQ 2
 #essa função deve devolver a base de dados
 def ler_base():
-  pass
+  return pd.read_csv('dados.csv')
 
 #REQ 3
 #essa função recebe a base lida anteriormente
